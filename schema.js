@@ -1,7 +1,6 @@
 module.exports = `
   type User {
     id: Int!
-    email: String!
     display_name: String!
     summary: String
     status: String!
