@@ -18,8 +18,7 @@ const schema = makeExecutableSchema({
 });
 
 app.use(express.static(__dirname + '/public'));
-
-app.use(cors());
+app.options("*", cors());
 app.use(bodyParser.json());
 
 app.use(
