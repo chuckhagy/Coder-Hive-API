@@ -22,7 +22,7 @@
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>97/97</span>
+        <span class='fraction'>98/98</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
@@ -37,7 +37,7 @@
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>97/97</span>
+        <span class='fraction'>98/98</span>
       </div>
     </div>
   </div>
@@ -320,7 +320,13 @@
 275
 276
 277
-278</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+278
+279
+280
+281
+282
+283
+284</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -428,7 +434,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -445,21 +450,28 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -644,7 +656,7 @@
     //Returns multiple items in array, like all components for a single user for example
     async getCollectionByIdentifier(identifier, idType, sort) {
         try {
-            let entity = await this._db(this._entityName).where({[idType]: identifier}).orderBy('created_at', 'desc');
+            let entity = await this._db(this._entityName).where({[idType]: identifier}).orderBy('created_at', 'desc').limit(30);
             return entity;
         } catch (error) {
             throw new Error('Error at DB')
@@ -705,9 +717,8 @@
 &nbsp;
     async getCollectionByIdentifierSpecial(identifier, idType, specialValue) {
         try {
-            let entity;
             if (specialValue) {
-                entity = await this._db(this._entityName)
+                let entity = await this._db(this._entityName)
                     .join('User', 'User.id', '=', `${this._entityName}.user_id`)
                     .join('Component', 'Component.id', '=', `${this._entityName}.component_id`)
                     .where({[idType]: identifier})
@@ -715,28 +726,35 @@
                         `${this._entityName}.id`,
                         `${this._entityName}.user_id`,
                         'User.display_name',
+                        'User.profile_picture',
                         `${this._entityName}.component_id`,
-                        'Component.title', 'Component.description',
+                        'Component.title',
+                        'Component.component_picture',
+                        'Component.description',
                         `${this._entityName}.created_at`,
                         `${this._entityName}.updated_at`,
                         `${this._entityName}.${specialValue}`,
                     );
+                return entity;
             } else {
-                entity = await this._db(this._entityName)
+                let entity = await this._db(this._entityName)
                     .join('User', 'User.id', '=', `${this._entityName}.user_id`)
-                    .join('Component', 'Component.id', '=', `${this._entityName}.id`)
+                    .join('Component', 'Component.id', '=', `${this._entityName}.component_id`)
                     .where({[idType]: identifier})
                     .select(
                         `${this._entityName}.id`,
                         `${this._entityName}.user_id`,
                         'User.display_name',
+                        'User.profile_picture',
                         `${this._entityName}.component_id`,
-                        'Component.title', 'Component.description',
+                        'Component.title',
+                        'Component.component_picture',
+                        'Component.description',
                         `${this._entityName}.created_at`,
                         `${this._entityName}.updated_at`,
                     );
+                return entity;
             }
-            return entity;
         } catch (error) {
             throw new Error('Error at DB')
         }
@@ -799,7 +817,7 @@
         let id = args.id;
         delete args.id;
         try {
-            let [entity] = await this._db(this._entityName).where({id}).update(args, "*")
+            let [entity] = await this._db(this._entityName).where({id}).update(args, "*");
             return Object.assign({}, entity)
         } catch (error) {
             throw new Error('Error at DB')
@@ -812,7 +830,7 @@
         delete args.id;
         try {
             let [entity] = await this._db(this._entityName).update({
-                status: 'Dead Bee',
+                status: 'deleted',
                 hashed_password: 'deletedaccount'
             }, "*").where({id});
             return Object.assign({}, entity)
@@ -880,7 +898,7 @@ module.exports = EntityRepository;</pre></td></tr>
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Fri Dec 08 2017 10:20:17 GMT-0800 (PST)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Wed Dec 20 2017 13:05:42 GMT-0800 (PST)
 </div>
 </div>
 <script src="../prettify.js"></script>
